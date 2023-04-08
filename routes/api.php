@@ -20,3 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 //get api for fatch user
 Route::get('usershow/{id?}',[RestApiController::class,'usershow']);
+//post api for add user
+Route::post('user-add',[RestApiController::class,'user_add']);

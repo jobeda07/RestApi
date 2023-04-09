@@ -133,4 +133,34 @@ class RestApiController extends Controller
             return response()->json(['massage'=>$massage],202);
         }
     }
+
+    public function single_delete($id){
+        User::findOrFail($id)->delete();
+        $message='user deleted successfully';
+        return response()->json(['message'=>$message],200);
+    }
+    public function json_delete(Request $request){
+        if($request->isMethod('delete')){
+            $data =$request->all();
+            User::where('id', $data['id'])->delete();
+            $message='user deleted successfully';
+            return response()->json(['message'=>$message],200);
+        }
+    }
+    public function multiple_delete($ids){
+        $ids = explode(',',$ids);
+        User::whereIn('id',$ids)->delete();
+        $message='user deleted successfully';
+            return response()->json(['message'=>$message],200);
+    }
+    public function multiple_delete_json(Request $request){
+        if($request->isMethod('delete')){
+            $data =$request->all();
+            User::whereIn('id', $data['id'])->delete();
+            $message='user deleted successfully';
+            return response()->json(['message'=>$message],200);
+        }
+        
+        
+    }
 }

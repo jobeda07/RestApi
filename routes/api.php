@@ -22,3 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('usershow/{id?}',[RestApiController::class,'usershow']);
 //post api for add user
 Route::post('user-add',[RestApiController::class,'user_add']);
+//post api for add multiple user
+Route::post('multiple-user-add',[RestApiController::class,'multiple_user_add']);

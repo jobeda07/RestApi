@@ -154,12 +154,24 @@ class RestApiController extends Controller
             return response()->json(['message'=>$message],200);
     }
     public function multiple_delete_json(Request $request){
-        if($request->isMethod('delete')){
-            $data =$request->all();
-            User::whereIn('id', $data['id'])->delete();
-            $message='user deleted successfully';
-            return response()->json(['message'=>$message],200);
+        $header=$request->header('Authorization');
+        if($header==""){
+            $message='Authorization is required';
+            return response()->json(['message'=>$message],422);
+        }else{
+            if($header=="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NSIsIm5hbWUiOiJsaXphICIsImlhdCI6MTIzNDV9.iNL7y7ZD5CeJF3XXaYgItVlhPcyCA4qeH1t1b-9Ya8k"){
+                if($request->isMethod('delete')){
+                    $data =$request->all();
+                    User::whereIn('id', $data['id'])->delete();
+                    $message='user deleted successfully';
+                    return response()->json(['message'=>$message],200);
+                }
+            }else{
+                $message='Authorization dose not match';
+                return response()->json(['message'=>$message],422);
+            }
         }
+        
         
         
     }

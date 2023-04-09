@@ -24,3 +24,7 @@ Route::get('usershow/{id?}',[RestApiController::class,'usershow']);
 Route::post('user-add',[RestApiController::class,'user_add']);
 //post api for add multiple user
 Route::post('multiple-user-add',[RestApiController::class,'multiple_user_add']);
+//put api for  update user
+Route::put('user-update/{id}',[RestApiController::class,'user_update']);
+//patch api for  update single record
+Route::patch('single-update/{id}',[RestApiController::class,'single_update']);

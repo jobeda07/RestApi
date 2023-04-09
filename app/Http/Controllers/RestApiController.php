@@ -49,7 +49,7 @@ class RestApiController extends Controller
           return response()->json(['massage'=>$massage],201);
       }
     }
-    
+
     public function multiple_user_add(Request $request){
         if($request->isMethod('post')){
             $data =$request->all();
@@ -81,5 +81,56 @@ class RestApiController extends Controller
          }
          return response()->json(['massage'=>$massage],201);
         }
-      }
+    }
+
+    public function user_update(Request $request ,$id){
+        if($request->isMethod('put')){
+            $data =$request->all();
+            //return $data;
+            $rules=[
+              'name'=>'required',
+              'password'=>'required',
+          ];
+          $custommessage=[
+              'name.required'=>'Name is required',
+              'password.required'=>'password is required',
+          ];
+          $validator=Validator::make($data,$rules,$custommessage);
+          if ($validator->fails()) {
+              return response()->json($validator->errors(),422);
+          }
+  
+          $user=User::findOrFail($id);
+          $user->update([
+              'name'=>$request->name,
+              'password'=> bcrypt($request->password),
+            ]);
+            $massage="user updated successfully";
+            return response()->json(['massage'=>$massage],202);
+        }
+    }
+
+    public function single_update(Request $request ,$id){
+        if($request->isMethod('patch')){
+            $data =$request->all();
+            //return $data;
+            $rules=[
+              'name'=>'required',
+          ];
+          $custommessage=[
+              'name.required'=>'Name is required',
+          ];
+          $validator=Validator::make($data,$rules,$custommessage);
+          if ($validator->fails()) {
+              return response()->json($validator->errors(),422);
+          }
+  
+          $user=User::findOrFail($id);
+          $user->update([
+              'name'=>$request->name,
+            ]);
+            $massage="single data updated successfully";
+            return response()->json(['massage'=>$massage],202);
+        }
+    }
 }

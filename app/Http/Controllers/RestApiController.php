@@ -213,4 +213,35 @@ class RestApiController extends Controller
           
         }
     }
+
+    public function login_passport_api(Request $request){
+          if($request->isMethod('post')){
+            $data=$request->all();
+            $rules=[
+                'email'=>'required|email|exists:users',
+                'password'=>'required'
+            ];
+            $custommessage=[
+                'email.required'=>'email is required',
+                'email.email'=>'email must be valid email',
+                'email.exists'=>'email dose not exists',
+                'password.required'=>'password is required',
+            ];
+            $validator=Validator::make($data,$rules,$custommessage);
+            if($validator->fails()){
+                return response()->json($validator->errors(),433);
+            }
+            if(Auth::attempt(['email'=>$data['email'],'password'=>$data['password']])){
+               $user=User::where('email',$data['email'])->first();
+               $access_token=$user->createToken($data['email'])->accessToken;
+               User::where('email',$data['email'])->update(['access_token'=>$access_token]);
+               $message='user successfully login';
+               return response()->json(['message'=>$message ,'access_token'=>$access_token],201);
+            }else{
+                $message='Invalid email or password';
+                return response()->json(['message'=>$message ,'access_token'=>$access_token],422);
+            }
+
+          }
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -174,5 +175,42 @@ class RestApiController extends Controller
         
         
         
+    }
+
+    public function register_passport_api(Request $request){
+        if($request->isMethod('post')){
+            $data=$request->all();
+            $rules=[
+                'name'=> 'required',
+                'email'=> 'required|email|unique:users',
+                'password'=> 'required',
+            ];
+            $custommessage=[
+                'name.required'=>'Name is required',
+                 'email.required'=>'email is required',
+                 'email.email'=>'Email must be  valid email',
+                 'password.required'=>'password is required',
+            ];
+            $validator=Validator::make($data,$rules,$custommessage);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(),433);
+        }
+        User::create([
+            'name'=>$request->name,
+            'email'=>$request->email,
+            'password'=> bcrypt($request->password),
+          ]);
+          if(Auth::attempt(['email'=>$data['email'],'password'=>$data['password']])){
+            $user=User::where('email', $data['email'])->first();
+            $access_token=$user->createToken($data['email'])->accessToken;
+            User::where('email',$data['email'])->update(['access_token'=>$access_token]);
+            $message="user successfully registered";
+            return response()->json(['message'=>$message,'access_token'=>$access_token],201);
+          }else{
+            $message="Opps! Something went wrong";
+            return response()->json(['message'=>$message,'access_token'=>$access_token],422);
+          }
+          
+        }
     }
 }
